@@ -87,15 +87,14 @@ impl Protocol {
                         network::Request::Ping => {
                             let success = protocol.ping(payload.1);
                             if success {
-                                if let Err(_) = sender_clone
+                                if sender_clone
                                     .send(utils::ChannelPayload::Response(network::Response::Ping))
+                                    .is_err()
                                 {
                                     eprintln!("[FAILED] Protocol::rt_forwared --> Receiver is dead, closing channel");
                                 }
-                            } else {
-                                if let Err(_) = sender_clone.send(utils::ChannelPayload::NoData) {
-                                    eprintln!("[FAILED] Protocol::rt_forwared --> Receiver is dead, closing channel");
-                                }
+                            } else if sender_clone.send(utils::ChannelPayload::NoData).is_err() {
+                                eprintln!("[FAILED] Protocol::rt_forwared --> Receiver is dead, closing channel");
                             }
                         }
                         _ => {
@@ -324,7 +323,7 @@ impl Protocol {
                 }
             }
 
-            for &routing::NodeAndDistance(ref node, _) in &queries {
+            for routing::NodeAndDistance(node, _) in &queries {
                 let n = node.clone();
                 let id_clone = id.clone();
                 let protocol_clone = self.clone();
@@ -394,7 +393,7 @@ impl Protocol {
                 }
             }
 
-            for &routing::NodeAndDistance(ref n, _) in &queries {
+            for routing::NodeAndDistance(n, _) in &queries {
                 let k_clone = k.clone();
                 let node = n.clone();
                 let protocol = self.clone();
@@ -453,14 +452,12 @@ impl Protocol {
     pub fn get(&self, k: String) -> Option<String> {
         let (val, mut nodes) = self.value_lookup(k.clone());
 
-        val.map(|v| {
+        val.inspect(|v| {
             if let Some(routing::NodeAndDistance(target, _)) = nodes.pop() {
                 self.store(target, k, v.clone());
             } else {
                 self.store(self.node.clone(), k, v.clone());
             }
-
-            v
         })
     }
 }

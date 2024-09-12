@@ -112,7 +112,7 @@ impl Rpc {
                             payload: req,
                         };
 
-                        if let Err(_) = sender.send(wrapped_req) {
+                        if sender.send(wrapped_req).is_err() {
                             eprintln!("[FAILED] Rpc::open, Request --> Receiver is dead, closing channel.");
                             break;
                         }
@@ -129,7 +129,7 @@ impl Rpc {
         let encoded = serde_json::to_string(msg)
             .expect("[FAILED] Rpc::send_msg --> Unable to serialize message");
         self.socket
-            .send_to(&encoded.as_bytes(), &msg.dst)
+            .send_to(encoded.as_bytes(), &msg.dst)
             .expect("[FAILED] Rpc::send_msg --> Error while sending message to specified address");
     }
 
@@ -150,7 +150,7 @@ impl Rpc {
                 }
             };
 
-            if let Ok(_) = tmp {
+            if tmp.is_ok() {
                 pending.remove(&token);
             }
         });
@@ -183,7 +183,7 @@ impl Rpc {
         let rpc = self.clone();
         thread::spawn(move || {
             thread::sleep(std::time::Duration::from_millis(TIMEOUT));
-            if let Ok(_) = sender.send(None) {
+            if sender.send(None).is_ok() {
                 let mut pending = rpc
                     .pending
                     .lock()

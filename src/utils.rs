@@ -27,9 +27,9 @@ pub fn get_local_ip() -> Option<String> {
     };
 
     match socket.local_addr() {
-        Ok(addr) => return Some(addr.ip().to_string()),
-        Err(_) => return None,
-    };
+        Ok(addr) => Some(addr.ip().to_string()),
+        Err(_) => None,
+    }
 }
 
 pub fn make_req_get_res(
@@ -108,7 +108,7 @@ pub fn dump_interface_state(interface: &Protocol, path: &str) {
     // write to json file
     let mut file = std::fs::File::create(path)
         .expect("[FAILED] Utils::dump_interface_state --> Unable to create dump file");
-    file.write_all(&json.to_string().as_bytes())
+    file.write_all(json.to_string().as_bytes())
         .expect("[FAILED] Utils::dump_interface_state --> Unable to write to dump file");
 
     // write also to a .plantuml file
@@ -119,7 +119,7 @@ pub fn dump_interface_state(interface: &Protocol, path: &str) {
         .expect("[FAILED] Utils::dump_interface_state --> Unable to write to dump file");
 
     diagram
-        .write_all(&json.to_string().as_bytes())
+        .write_all(json.to_string().as_bytes())
         .expect("[FAILED] Utils::dump_interface_state --> Unable to write to dump file");
 
     diagram
@@ -152,6 +152,6 @@ pub fn dump_node_and_distance(
 
     let mut file = std::fs::File::create(path)
         .expect("[FAILED] Utils::dump_node_and_distance --> Unable to create dump file");
-    file.write_all(&json.to_string().as_bytes())
+    file.write_all(json.to_string().as_bytes())
         .expect("[FAILED] Utils::dump_node_and_distance --> Unable to write to dump file");
 }

@@ -40,8 +40,8 @@ mod tests {
         let node1 = Node::new(utils::get_local_ip().unwrap(), 1336);
 
         let dist = Distance::new(&node0.id, &node1.id);
-        let nd0 = NodeAndDistance(node0.clone(), dist.clone());
-        let nd1 = NodeAndDistance(node1.clone(), dist.clone());
+        let nd0 = NodeAndDistance(node0.clone(), dist);
+        let nd1 = NodeAndDistance(node1.clone(), dist);
 
         assert_eq!(nd0, nd1);
     }

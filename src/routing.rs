@@ -69,6 +69,11 @@ impl KBucket {
         }
     }
 }
+impl Default for KBucket {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl RoutingTable {
     pub fn new(
@@ -121,9 +126,10 @@ impl RoutingTable {
     }
 
     fn contact_via_rpc(&self, dst: Node) -> bool {
-        if let Err(_) = self
+        if self
             .sender
             .send(ChannelPayload::Request((network::Request::Ping, dst)))
+            .is_err()
         {
             println!(
                 "[FAILED] RoutingTable::contact_via_rpc --> Receiver is dead, closing channel"
