@@ -38,16 +38,9 @@ pub struct Distance(pub [u8; KEY_LEN]);
 impl Distance {
     pub fn new(k1: &Key, k2: &Key) -> Distance {
         let mut ret = [0; KEY_LEN];
-
-        ret.iter_mut()
-            .zip(k1.0.iter())
-            .zip(k2.0.iter())
-            .for_each(|((ret, k1), k2)| *ret = k1 ^ k2);
-
-        // for i in 0..KEY_LEN {
-        //     ret[i] = k1.0[i] ^ k2.0[i];
-        // }
-
+        for i in 0..KEY_LEN {
+            ret[i] = k1.0[i] ^ k2.0[i];
+        }
         Self(ret)
     }
 }

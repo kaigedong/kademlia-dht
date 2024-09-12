@@ -2,17 +2,13 @@ use serde::{Deserialize, Serialize};
 
 use super::key::Key;
 use super::node::*;
-use super::routing::FindValueResult;
-use super::routing::NodeAndDistance;
-use super::BUF_SIZE;
-use super::TIMEOUT;
+use super::routing::{FindValueResult, NodeAndDistance};
+use super::{BUF_SIZE, TIMEOUT};
 
 use std::collections::HashMap;
 use std::net::UdpSocket;
-use std::str;
-use std::sync::mpsc;
-use std::sync::{Arc, Mutex};
-use std::thread;
+use std::sync::{mpsc, Arc, Mutex};
+use std::{str, thread};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Request {

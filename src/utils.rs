@@ -16,15 +16,13 @@ pub enum ChannelPayload {
 }
 
 pub fn get_local_ip() -> Option<String> {
-    let socket = match UdpSocket::bind("0.0.0.0:0") {
-        Ok(s) => s,
-        Err(_) => return None,
+    let Ok(socket) = UdpSocket::bind("0.0.0.0:0") else {
+        return None;
     };
 
-    match socket.connect("8.8.8.8:80") {
-        Ok(()) => (),
-        Err(_) => return None,
-    };
+    if socket.connect("8.8.8.8:80").is_err() {
+        return None;
+    }
 
     match socket.local_addr() {
         Ok(addr) => Some(addr.ip().to_string()),
